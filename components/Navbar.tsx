@@ -1,4 +1,3 @@
-
 // components/Navbar.tsx
 
 import React from 'react';
@@ -9,25 +8,16 @@ import Icon from './Icon';
 interface NavbarProps {
   onFavoritesClick: () => void;
   onAboutClick: () => void;
+  onSettingsClick: () => void;
 }
 
 /**
  * The application's main navigation bar.
- * Provides controls for theme, language, favorites, and changing governorate.
+ * Provides controls for favorites, about, and settings.
  */
-const Navbar: React.FC<NavbarProps> = ({ onFavoritesClick, onAboutClick }) => {
-  const { theme, toggleTheme, language, setLanguage, setGovernorate, t } = useAppContext();
-
-  const handleLanguageChange = (lang: Language) => {
-    setLanguage(lang);
-  };
+const Navbar: React.FC<NavbarProps> = ({ onFavoritesClick, onAboutClick, onSettingsClick }) => {
+  const { t } = useAppContext();
   
-  const handleResetGovernorate = () => {
-    if (window.confirm(t('changeGovernorate') + '?')) {
-        setGovernorate(null);
-    }
-  };
-
   return (
     <nav className="sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-md z-40">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -41,33 +31,16 @@ const Navbar: React.FC<NavbarProps> = ({ onFavoritesClick, onAboutClick }) => {
 
         {/* Action Icons */}
         <div className="flex items-center gap-2 sm:gap-4">
-          {/* Language Switcher */}
-          <div className="flex items-center bg-slate-200 dark:bg-slate-700 rounded-full p-1">
-            {(['en', 'fr', 'ar'] as Language[]).map(lang => (
-              <button 
-                key={lang} 
-                onClick={() => handleLanguageChange(lang)}
-                className={`px-2 py-1 text-xs sm:text-sm font-bold rounded-full transition-colors ${language === lang ? 'bg-amber-500 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'}`}
-              >
-                {lang.toUpperCase()}
-              </button>
-            ))}
-          </div>
-          
-          <button onClick={toggleTheme} className="nav-icon-button" aria-label="Toggle theme">
-            <Icon name={theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'} />
-          </button>
-          
-          <button onClick={onFavoritesClick} className="nav-icon-button" aria-label="View favorites">
+          <button onClick={onFavoritesClick} className="nav-icon-button" aria-label={t('favorites')}>
             <Icon name="fa-solid fa-heart" />
           </button>
 
-          <button onClick={onAboutClick} className="nav-icon-button" aria-label="About app">
+          <button onClick={onAboutClick} className="nav-icon-button" aria-label={t('about')}>
             <Icon name="fa-solid fa-info-circle" />
           </button>
-
-          <button onClick={handleResetGovernorate} className="nav-icon-button" aria-label="Change governorate">
-            <Icon name="fa-solid fa-map" />
+          
+          <button onClick={onSettingsClick} className="nav-icon-button" aria-label={t('settings')}>
+            <Icon name="fa-solid fa-cog" />
           </button>
         </div>
       </div>

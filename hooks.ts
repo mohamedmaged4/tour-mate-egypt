@@ -1,7 +1,7 @@
-
 // hooks.ts
 
 import { useState, useEffect, useCallback } from 'react';
+import { Language } from './types';
 
 /**
  * A custom hook to synchronize state with localStorage.
@@ -77,10 +77,10 @@ export const useSpeech = () => {
   /**
    * Speaks the given text using a selected voice.
    * @param text The text to be spoken.
-   * @param lang The language of the text ('en', 'fr', 'ar').
+   * @param lang The language of the text.
    * @param gender The desired voice gender ('male' or 'female').
    */
-  const speak = useCallback((text: string, lang: 'en' | 'fr' | 'ar', gender: 'male' | 'female') => {
+  const speak = useCallback((text: string, lang: Language, gender: 'male' | 'female') => {
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
     }
@@ -92,6 +92,9 @@ export const useSpeech = () => {
       en: 'en-US',
       fr: 'fr-FR',
       ar: 'ar-SA',
+      it: 'it-IT',
+      de: 'de-DE',
+      ru: 'ru-RU',
     }[lang];
 
     utterance.lang = langCode;

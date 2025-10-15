@@ -1,8 +1,7 @@
-
 // types.ts
 
 // Supported languages for the application
-export type Language = 'en' | 'fr' | 'ar';
+export type Language = 'en' | 'fr' | 'ar' | 'it' | 'de' | 'ru';
 
 // Categories for places
 export type Category = 'heritage' | 'restaurants' | 'cafes' | 'hotels';
@@ -12,6 +11,9 @@ export interface LocalizedString {
   en: string;
   fr: string;
   ar: string;
+  it: string;
+  de: string;
+  ru: string;
 }
 
 // Represents a single place of interest
