@@ -8,6 +8,7 @@ import MainContent from './components/MainContent';
 import { Language, Place } from './types';
 import Icon from './components/Icon';
 import { EGYPT_DATA } from './data';
+import RafiqiModal from './components/RafiqiModal';
 
 /**
  * A generic modal component for displaying content like 'About' or 'Favorites'.
@@ -98,7 +99,7 @@ const SettingsContent: React.FC = () => {
             <div>
                 <h3 className="text-lg font-semibold mb-3 text-slate-700 dark:text-slate-300">{t('language')}</h3>
                 <div className="flex flex-wrap gap-2">
-                    {(['en', 'fr', 'ar', 'it', 'de', 'ru'] as Language[]).map(lang => (
+                    {(['en', 'fr', 'ar', 'it', 'de', 'ru', 'zh'] as Language[]).map(lang => (
                         <button 
                             key={lang} 
                             onClick={() => setLanguage(lang)}
@@ -130,46 +131,62 @@ const SettingsContent: React.FC = () => {
  * It also manages the visibility of the About and Favorites modals.
  */
 function App() {
-  const { governorate, t } = useAppContext();
+  const { governorate, t, language } = useAppContext();
   const [showFavorites, setShowFavorites] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showRafiqi, setShowRafiqi] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Conditional rendering based on whether a governorate has been selected.
   if (!governorate) {
     return <WelcomeScreen />;
   }
 
+  // If a governorate is selected, show the main app layout.
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-slate-900">
+    <div className={`font-sans bg-stone-50 dark:bg-slate-900 min-h-screen ${language === 'ar' ? 'font-cairo' : 'font-sans'}`}>
       <Navbar 
-        onFavoritesClick={() => setShowFavorites(true)}
+        onFavoritesClick={() => setShowFavorites(true)} 
         onAboutClick={() => setShowAbout(true)}
         onSettingsClick={() => setShowSettings(true)}
+        onCategoriesClick={() => setIsSidebarOpen(true)}
       />
       <main>
-        <MainContent />
+        <MainContent isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
       </main>
       
+      {/* Modals */}
       {showFavorites && (
         <GenericModal title={t('myFavorites')} onClose={() => setShowFavorites(false)}>
           <FavoritesContent />
         </GenericModal>
       )}
-
       {showAbout && (
         <GenericModal title={t('aboutTourMate')} onClose={() => setShowAbout(false)}>
-          <div className="space-y-4 text-slate-600 dark:text-slate-300">
-             <p>{t('aboutText')}</p>
-          </div>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
+                <p>{t('aboutText')}</p>
+                <p>Version: 1.0.0</p>
+            </div>
         </GenericModal>
       )}
-      
-      {showSettings && (
+       {showSettings && (
         <GenericModal title={t('settings')} onClose={() => setShowSettings(false)}>
           <SettingsContent />
         </GenericModal>
       )}
+
+      {/* Rafiqi AI Chat Button and Modal */}
+       <button
+        onClick={() => setShowRafiqi(true)}
+        className="fixed bottom-6 left-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center z-30 transform hover:scale-110 transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50"
+        aria-label={t('rafiqi')}
+        style={{ left: language === 'ar' ? 'auto' : '1.5rem', right: language === 'ar' ? '1.5rem' : 'auto' }}
+      >
+        <Icon name="fa-solid fa-robot" className="text-2xl" />
+      </button>
+
+      {showRafiqi && <RafiqiModal onClose={() => setShowRafiqi(false)} />}
     </div>
   );
 }

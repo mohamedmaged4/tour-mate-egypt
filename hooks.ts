@@ -95,6 +95,7 @@ export const useSpeech = () => {
       it: 'it-IT',
       de: 'de-DE',
       ru: 'ru-RU',
+      zh: 'zh-CN',
     }[lang];
 
     utterance.lang = langCode;

@@ -9,13 +9,14 @@ interface NavbarProps {
   onFavoritesClick: () => void;
   onAboutClick: () => void;
   onSettingsClick: () => void;
+  onCategoriesClick: () => void;
 }
 
 /**
  * The application's main navigation bar.
  * Provides controls for favorites, about, and settings.
  */
-const Navbar: React.FC<NavbarProps> = ({ onFavoritesClick, onAboutClick, onSettingsClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ onFavoritesClick, onAboutClick, onSettingsClick, onCategoriesClick }) => {
   const { t } = useAppContext();
   
   return (
@@ -41,6 +42,10 @@ const Navbar: React.FC<NavbarProps> = ({ onFavoritesClick, onAboutClick, onSetti
           
           <button onClick={onSettingsClick} className="nav-icon-button" aria-label={t('settings')}>
             <Icon name="fa-solid fa-cog" />
+          </button>
+
+          <button onClick={onCategoriesClick} className="nav-icon-button" aria-label={t('categories')}>
+            <Icon name="fa-solid fa-bars" />
           </button>
         </div>
       </div>

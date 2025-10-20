@@ -1,9 +1,8 @@
-
 // contexts.tsx
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useLocalStorage } from './hooks';
-import { Language, Place } from './types';
+import { Language, Place, Review } from './types';
 import { UI_TRANSLATIONS } from './data';
 
 // Define the shape of the context state
@@ -20,6 +19,8 @@ interface AppContextType {
   isFavorite: (placeId: string) => boolean;
   t: (key: string) => string;
   showToast: (message: string) => void;
+  addReview: (placeId: string, reviewData: { author: string; rating: number; comment: string }) => void;
+  getReviewsForPlace: (placeId: string) => Review[];
 }
 
 // Create the context with a default undefined value
@@ -39,6 +40,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [language, setLanguage] = useLocalStorage<Language>('tourmate-language', 'en');
   const [governorate, setGovernorate] = useLocalStorage<string | null>('tourmate-governorate', null);
   const [favorites, setFavorites] = useLocalStorage<Place[]>('tourmate-favorites', []);
+  const [reviews, setReviews] = useLocalStorage<{ [placeId: string]: Review[] }>('tourmate-reviews', {});
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: '', visible: false });
   
   // Effect to apply the dark mode class to the html element
@@ -85,6 +87,27 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }, 3000);
   };
 
+  // Functions to manage reviews
+  const addReview = (placeId: string, reviewData: { author: string; rating: number; comment: string }) => {
+    const newReview: Review = {
+      id: `review-${Date.now()}`,
+      placeId,
+      ...reviewData,
+      timestamp: Date.now(),
+    };
+    const existingReviews = reviews[placeId] || [];
+    setReviews(prev => ({
+      ...prev,
+      [placeId]: [...existingReviews, newReview],
+    }));
+    showToast(t('reviewAdded'));
+  };
+
+  const getReviewsForPlace = (placeId: string): Review[] => {
+    return (reviews[placeId] || []).sort((a,b) => b.timestamp - a.timestamp);
+  };
+
+
   const value = {
     theme,
     toggleTheme,
@@ -98,6 +121,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     isFavorite,
     t,
     showToast,
+    addReview,
+    getReviewsForPlace,
   };
 
   return (
